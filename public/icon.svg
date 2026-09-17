@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="ByteBlast icon">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#0b1020"/>
+  <path d="M30 40L12 64L30 88H44L26 64L44 40H30ZM58 36H74L98 92H82L74 75H58L66 92H52L58 36Z" fill="url(#g)"/>
+  <path d="M88 40H102V88H88V40Z" fill="#e2e8f0" opacity="0.9"/>
+</svg>
