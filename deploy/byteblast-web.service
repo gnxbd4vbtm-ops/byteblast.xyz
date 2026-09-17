@@ -1,0 +1,17 @@
+[Unit]
+Description=byteblast.xyz Next.js application
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/byte/Projects/byteblast.xyz
+Environment=NODE_ENV=production
+Environment=PORT=3000
+ExecStart=/usr/bin/npm run start -- --hostname 0.0.0.0 --port 3000
+Restart=always
+RestartSec=5
+User=byte
+Group=byte
+
+[Install]
+WantedBy=multi-user.target
