@@ -82,7 +82,10 @@ h3 { font-size: 19px; letter-spacing: -.03em; }
 .card-footer { align-items: flex-start; gap: 12px; padding-top: 15px; color: #718886; font: 10px/1.5 "DM Mono", monospace; }
 .card-footer span:last-child { text-align: right; white-space: nowrap; }
 .board-footer { display: flex; justify-content: space-between; margin-top: 80px; border-top: 1px solid var(--line); padding-top: 17px; color: #5d7776; font: 10px "DM Mono", monospace; letter-spacing: .08em; text-transform: uppercase; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+.footer-links a { color: #7f9a98; text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--cyan); }
 @keyframes pulse { 50% { opacity: .35; transform: scale(.7); } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 620px) { .board-shell { width: min(100% - 28px, 1120px); padding-top: 34px; } .board-header { align-items: flex-start; flex-direction: column; } .refresh-button { margin-top: 4px; } .overall-banner { align-items: flex-start; flex-wrap: wrap; margin-top: 40px; } .checked-time { width: 100%; margin-left: 50px; } .section-heading { align-items: flex-start; flex-direction: column; margin-top: 42px; } .board-footer { gap: 12px; flex-direction: column; } }
+@media (max-width: 620px) { .board-shell { width: min(100% - 28px, 1120px); padding-top: 34px; } .board-header { align-items: flex-start; flex-direction: column; } .refresh-button { margin-top: 4px; } .overall-banner { align-items: flex-start; flex-wrap: wrap; margin-top: 40px; } .checked-time { width: 100%; margin-left: 50px; } .section-heading { align-items: flex-start; flex-direction: column; margin-top: 42px; } .board-footer { gap: 12px; flex-direction: column; } .footer-links { gap: 10px 16px; } }
 @import "tailwindcss";

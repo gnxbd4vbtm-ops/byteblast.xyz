@@ -104,8 +104,11 @@ export default function StatusBoard({ initialData }: { initialData: StatusPayloa
       </section>
 
       <footer className="board-footer">
-        <span>byteblast operations</span>
-        <span>Independent status monitor</span>
+        <span>© 2026 Byte Blast</span>
+        <div className="footer-links">
+          <a href="https://byteblast.xyz">byteblast.xyz</a>
+          <a href="mailto:contact@byteblast.xyz">contact@byteblast.xyz</a>
+        </div>
       </footer>
     </div>
   );
