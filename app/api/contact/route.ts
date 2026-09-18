@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { saveContactMessage } from "@/lib/monitoring";
+import { sendContactNotification } from "@/lib/mail";
+import { getPublicOrigin } from "@/lib/request-origin";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -16,6 +18,7 @@ export async function POST(request: Request) {
   }
 
   await saveContactMessage(payload);
+  await sendContactNotification(payload);
 
-  return NextResponse.redirect(new URL("/contact?success=1", request.url));
+  return NextResponse.redirect(new URL("/contact?success=1", getPublicOrigin(request)));
 }

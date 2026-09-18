@@ -1,0 +1,30 @@
+# Cloudflare Tunnel Configuration for byteblast.xyz
+# Place this file at /etc/cloudflared/config.yml or reference it via:
+# cloudflared tunnel --config deploy/cloudflare-tunnel.yml run <TUNNEL_NAME_OR_UUID>
+
+tunnel: <REPLACE_WITH_YOUR_TUNNEL_UUID>
+credentials-file: /home/byte/.cloudflared/<REPLACE_WITH_YOUR_TUNNEL_UUID>.json
+
+# Origin request global defaults
+originRequest:
+  connectTimeout: 15s
+  noTLSVerify: false
+  http2Origin: true
+  keepAliveConnections: 100
+  keepAliveTimeout: 90s
+
+ingress:
+  # Primary apex domain
+  - hostname: byteblast.xyz
+    service: http://127.0.0.1:3000
+
+  # Canonical www subdomain
+  - hostname: www.byteblast.xyz
+    service: http://127.0.0.1:3000
+
+  # Dedicated status domain (can point directly to /status or let Next.js handle it)
+  - hostname: status.byteblast.xyz
+    service: http://127.0.0.1:3000
+
+  # Fallback catch-all for unmatched traffic
+  - service: http_status:404

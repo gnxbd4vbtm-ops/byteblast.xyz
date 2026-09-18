@@ -400,6 +400,17 @@ export function getRecentContactMessagesDb(limit = 8): ContactMessage[] {
   return rows;
 }
 
+export function getContactMessageDb(id: string): ContactMessage | undefined {
+  const db = getDb();
+  return db
+    .prepare(`
+      SELECT id, timestamp, name, email, subject, message, source
+      FROM contact_messages
+      WHERE id = ?
+    `)
+    .get(id) as ContactMessage | undefined;
+}
+
 export function getSiteSummaryDb() {
   const db = getDb();
 

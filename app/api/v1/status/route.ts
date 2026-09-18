@@ -77,7 +77,7 @@ export async function GET(request: Request) {
     const db = getDb();
     db.prepare("SELECT 1").get();
     dbLatencyMs = Math.round((performance.now() - dbCheckStart) * 100) / 100;
-  } catch (err) {
+  } catch {
     dbStatus = "error";
     dbErrorCode = "ERR_DB_CONNECT";
     dbLatencyMs = Math.round((performance.now() - dbCheckStart) * 100) / 100;

@@ -1,0 +1,16 @@
+[Unit]
+Description=Cloudflare Tunnel for byteblast.xyz
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=byte
+Group=byte
+ExecStart=/usr/local/bin/cloudflared --config /etc/cloudflared/config.yml tunnel run
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

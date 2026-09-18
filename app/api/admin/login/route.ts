@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminCredentials, setAdminSession } from "@/lib/admin-auth";
+import { getPublicOrigin } from "@/lib/request-origin";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -16,5 +17,5 @@ export async function POST(request: Request) {
 
   await setAdminSession(username);
 
-  return NextResponse.redirect(new URL("/admin", request.url));
+  return NextResponse.redirect(new URL("/admin", getPublicOrigin(request)));
 }

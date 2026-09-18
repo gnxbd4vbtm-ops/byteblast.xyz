@@ -1,17 +1,37 @@
 [Unit]
-Description=byteblast.xyz Next.js application
+Description=byteblast.xyz Next.js Production Service
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/byte/Projects/byteblast.xyz
-Environment=NODE_ENV=production
-Environment=PORT=3000
-ExecStart=/usr/bin/npm run start -- --hostname 0.0.0.0 --port 3000
-Restart=always
-RestartSec=5
 User=byte
 Group=byte
+WorkingDirectory=/home/byte/Projects/byteblast.xyz
+EnvironmentFile=-/home/byte/Projects/byteblast.xyz/.env.local
+EnvironmentFile=-/home/byte/Projects/byteblast.xyz/.env.production
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=127.0.0.1
+
+# Bound to localhost since Cloudflare Tunnel routes traffic internally
+ExecStart=/usr/bin/npm run start -- --hostname 127.0.0.1 --port 3000
+
+# Reliability & restart policy
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=byteblast-web
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/byte/Projects/byteblast.xyz/data
+
+# Resource limits
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target
