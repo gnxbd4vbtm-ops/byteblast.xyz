@@ -1,6 +1,6 @@
 # byteblast status
 
-An independent status dashboard for `byteblast.xyz`. It checks the existing site health endpoint server-side, reports availability and response latency, and refreshes every 30 seconds in the browser.
+An independent status dashboard for `byteblast.xyz`. It checks each monitored website over HTTP(S) server-side, reports availability and response latency, and refreshes every 30 seconds in the browser.
 
 ## Run locally
 
@@ -20,14 +20,14 @@ Add another entry to `lib/monitors.ts`:
 	id: "service-id",
 	name: "Service name",
 	description: "What this service does",
-	url: "https://service.example.com/api/health",
+	url: "https://service.example.com",
 	kind: "api",
 }
 ```
 
-Supported kinds are `api`, `website`, and `service`. Each entry automatically gets a status card, HTTP result, latency, and refresh behavior.
+Supported kinds are `api`, `website`, and `service`. A monitor is online when its URL returns a successful HTTP response. Each entry automatically gets a status card, HTTP result, latency, and refresh behavior.
 
-Set `BYTEBLAST_HEALTH_URL` in `.env.local` to override the default `https://byteblast.xyz/api/health` target.
+Set `BYTEBLAST_HEALTH_URL` in `.env.local` to override the default `https://byteblast.xyz` target.
 
 ## Production
 
