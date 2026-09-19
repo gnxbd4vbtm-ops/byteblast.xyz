@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const contactMethods = [
   { label: "Email", value: "contact@byteblast.xyz", href: "mailto:contact@byteblast.xyz" },
   { label: "Admin", value: "admin@byteblast.xyz", href: "mailto:admin@byteblast.xyz" },
@@ -6,7 +8,16 @@ const contactMethods = [
 
 export default function ContactPage() {
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-5 sm:py-10">
+      <div className="mb-4 md:hidden">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium text-slate-200 transition hover:border-slate-500 hover:text-white"
+        >
+          <span aria-hidden="true">←</span> Back
+        </Link>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8">
           <p className="text-xs uppercase tracking-[0.32em] text-cyan-300">Contact</p>
@@ -29,6 +40,9 @@ export default function ContactPage() {
 
         <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8">
           <p className="text-xs uppercase tracking-[0.32em] text-slate-500">Send a note</p>
+          <p className="mt-3 text-sm leading-6 text-slate-300">
+            Need access to codespace.byteblast.xyz? Send a note through this form or email contact@byteblast.xyz with a short request describing the project and intended use.
+          </p>
           <form action="/api/contact" method="post" className="mt-6 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm text-slate-200">
