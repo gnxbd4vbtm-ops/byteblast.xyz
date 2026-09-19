@@ -311,7 +311,9 @@ export function getSiteContent(): SiteContent {
 
   const content: Record<string, string> = { ...DEFAULT_CONTENT };
   for (const row of rows) {
-    content[row.key] = row.value;
+    if (row.value.trim()) {
+      content[row.key] = row.value;
+    }
   }
 
   return content as unknown as SiteContent;

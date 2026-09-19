@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     if (payload.hero_description !== undefined) updates.hero_description = payload.hero_description;
     if (payload.current_focus !== undefined) updates.current_focus = payload.current_focus;
     if (payload.availability !== undefined) updates.availability = payload.availability;
-    if (payload.status_notes !== undefined) updates.status_notes = payload.status_notes;
+    if (payload.status_notes?.trim()) updates.status_notes = payload.status_notes;
 
     updateSiteContent(updates);
     revalidatePath("/");
