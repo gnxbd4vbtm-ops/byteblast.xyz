@@ -23,13 +23,6 @@ export const monitors: MonitorDefinition[] = [
     kind: "website",
   },
   {
-    id: "byteblast-status",
-    name: "status.byteblast.xyz",
-    description: "Status/monitoring website - imac-status-production-testing tunnel",
-    url: "https://status.byteblast.xyz",
-    kind: "website",
-  },
-  {
     id: "byteblast-git",
     name: "git.byteblast.xyz",
     description: "Forgejo web interface - forgejo-production tunnel",
