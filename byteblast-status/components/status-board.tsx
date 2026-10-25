@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { MonitorResult } from "@/lib/monitors";
 
 type StatusPayload = {
@@ -16,9 +16,50 @@ const kindLabels = {
   service: "Service",
 };
 
+const latencySampleCount = 5;
+
 function formatCheckedAt(timestamp: string | null) {
   if (!timestamp) return "Waiting for first check";
   return `Checked ${new Intl.DateTimeFormat("en", { hour: "numeric", minute: "2-digit", second: "2-digit" }).format(new Date(timestamp))}`;
+}
+
+async function requestEdgeTrace(url: string): Promise<number> {
+  const startedAt = performance.now();
+  const response = await fetch(url, {
+    cache: "no-store",
+    mode: "no-cors",
+    signal: AbortSignal.timeout(5000),
+  });
+  if (response.type !== "opaque" && !response.ok) {
+    throw new Error("Edge latency request failed");
+  }
+  await response.arrayBuffer();
+  return performance.now() - startedAt;
+}
+
+async function measureBrowserLatency(url: string): Promise<number | null> {
+  const edgeUrl = new URL("/cdn-cgi/trace", url).toString();
+  try {
+    await requestEdgeTrace(edgeUrl);
+    const samples: number[] = [];
+    for (let i = 0; i < latencySampleCount; i += 1) {
+      samples.push(await requestEdgeTrace(edgeUrl));
+    }
+    samples.sort((a, b) => a - b);
+    return samples[Math.floor(samples.length / 2)];
+  } catch {
+    return null;
+  }
+}
+
+async function measureMonitorLatencies(monitors: MonitorResult[]) {
+  return Promise.all(
+    monitors.map(async (monitor) => ({
+      ...monitor,
+      latencyMs: await measureBrowserLatency(monitor.url),
+      latencyMethod: "edge-http" as const,
+    })),
+  );
 }
 
 export default function StatusBoard({ initialData }: { initialData: StatusPayload }) {
@@ -26,23 +67,35 @@ export default function StatusBoard({ initialData }: { initialData: StatusPayloa
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<string | null>(initialData.checkedAt);
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
       const response = await fetch("/api/status", { cache: "no-store" });
       if (!response.ok) throw new Error("Status request failed");
       const nextData = (await response.json()) as StatusPayload;
-      setData(nextData);
+      setData({
+        ...nextData,
+        monitors: await measureMonitorLatencies(nextData.monitors),
+      });
       setLastRefresh(nextData.checkedAt);
     } finally {
       setIsRefreshing(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
+    let active = true;
+    void measureMonitorLatencies(initialData.monitors).then((monitors) => {
+      if (active) {
+        setData((current) => ({ ...current, monitors }));
+      }
+    });
     const interval = window.setInterval(() => void refresh(), 30000);
-    return () => window.clearInterval(interval);
-  }, []);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [initialData.monitors, refresh]);
 
   const allOnline = data.onlineCount === data.totalCount && data.totalCount > 0;
 
@@ -94,7 +147,12 @@ export default function StatusBoard({ initialData }: { initialData: StatusPayloa
               </div>
             </div>
             <div className="metrics">
-              <div><span>Response</span><strong>{monitor.latencyMs === null ? "—" : `${monitor.latencyMs} ms`}</strong></div>
+              <div>
+                <span>
+                  {monitor.latencyMethod === "edge-http" ? "Latency · Edge HTTP" : "Latency"}
+                </span>
+                <strong>{monitor.latencyMs === null ? "—" : `${monitor.latencyMs.toFixed(1)} ms`}</strong>
+              </div>
               <div><span>HTTP</span><strong>{monitor.statusCode ?? "—"}</strong></div>
               <div><span>Signal</span><strong>{monitor.online ? "Good" : "Lost"}</strong></div>
             </div>

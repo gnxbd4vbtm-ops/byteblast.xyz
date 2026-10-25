@@ -1,8 +1,8 @@
 import StatusBoard from "@/components/status-board";
-import { checkMonitor, monitors } from "@/lib/monitors";
+import { checkMonitors, monitors } from "@/lib/monitors";
 
 async function getInitialStatus() {
-  const results = await Promise.all(monitors.map(checkMonitor));
+  const results = await checkMonitors(monitors);
 
   return {
     monitors: results,

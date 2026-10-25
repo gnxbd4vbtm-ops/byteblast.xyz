@@ -57,7 +57,7 @@ export default async function StatusPage() {
           <div>
             <SiteLatency className="metric-accent" />
           </div>
-          <p className="metric-note">One-packet ICMP ping from this server to byteblast.xyz</p>
+          <p className="metric-note">Browser-to-Cloudflare edge RTT estimate, using warmed HTTP requests</p>
         </article>
 
         <article className="status-metric">

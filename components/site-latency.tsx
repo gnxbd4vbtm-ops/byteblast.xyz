@@ -2,6 +2,29 @@
 
 import { useEffect, useState } from "react";
 
+const sampleCount = 5;
+
+async function requestCloudflareEdge(): Promise<number> {
+  const startedAt = performance.now();
+  const response = await fetch("/cdn-cgi/trace", {
+    cache: "no-store",
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) throw new Error("Cloudflare edge latency request failed");
+  await response.arrayBuffer();
+  return performance.now() - startedAt;
+}
+
+async function measureEdgeLatency(): Promise<number> {
+  await requestCloudflareEdge();
+  const samples: number[] = [];
+  for (let i = 0; i < sampleCount; i += 1) {
+    samples.push(await requestCloudflareEdge());
+  }
+  samples.sort((a, b) => a - b);
+  return samples[Math.floor(samples.length / 2)];
+}
+
 export default function SiteLatency({ className = "" }: { className?: string }) {
   const [latency, setLatency] = useState<number | null | undefined>(undefined);
 
@@ -14,14 +37,9 @@ export default function SiteLatency({ className = "" }: { className?: string }) 
       requestInFlight = true;
 
       try {
-        const response = await fetch("/api/latency", {
-          cache: "no-store",
-        });
-        if (!response.ok) throw new Error("ICMP latency probe failed");
-        const result: { latencyMs: number } = await response.json();
-
+        const latencyMs = await measureEdgeLatency();
         if (active) {
-          setLatency(result.latencyMs);
+          setLatency(latencyMs);
         }
       } catch {
         if (active) setLatency(null);

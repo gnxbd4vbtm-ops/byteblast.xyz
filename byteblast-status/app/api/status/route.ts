@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { checkMonitor, monitors } from "@/lib/monitors";
+import { checkMonitors, monitors } from "@/lib/monitors";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const results = await Promise.all(monitors.map(checkMonitor));
+  const results = await checkMonitors(monitors);
   const onlineCount = results.filter((monitor) => monitor.online).length;
 
   return NextResponse.json(

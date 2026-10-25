@@ -1,6 +1,6 @@
 # byteblast status
 
-An independent status dashboard for `byteblast.xyz`. It checks each monitored website over HTTP(S) server-side, reports availability and response latency, and refreshes every 30 seconds in the browser.
+An independent status dashboard for `byteblast.xyz`. It checks each monitored website over HTTP(S) server-side for availability and estimates visitor-to-edge latency from the visitor's browser. The dashboard refreshes every 30 seconds in the browser.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ Add another entry to `lib/monitors.ts`:
 }
 ```
 
-Supported kinds are `api`, `website`, and `service`. A monitor is online when its URL returns a successful HTTP response. Each entry automatically gets a status card, HTTP result, latency, and refresh behavior.
+Supported kinds are `api`, `website`, and `service`. A monitor is online when its URL returns a successful HTTP response. Latency warms the browser connection and takes the median of five requests to that hostname's lightweight Cloudflare trace endpoint; this estimates visitor-to-edge latency and is not an ICMP ping or an origin response-time measurement. Cross-origin requests use opaque `no-cors` fetches, so the browser can time the response without reading its contents. Each entry automatically gets a status card, HTTP result, latency, and refresh behavior.
 
 Set `BYTEBLAST_HEALTH_URL` in `.env.local` to override the default `https://byteblast.xyz` target.
 

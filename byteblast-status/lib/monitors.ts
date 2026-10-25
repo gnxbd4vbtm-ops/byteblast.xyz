@@ -9,6 +9,7 @@ export type MonitorDefinition = {
 export type MonitorResult = MonitorDefinition & {
   online: boolean;
   latencyMs: number | null;
+  latencyMethod: "edge-http" | null;
   statusCode: number | null;
   checkedAt: string;
   detail: string;
@@ -20,6 +21,13 @@ export const monitors: MonitorDefinition[] = [
     name: "byteblast.xyz",
     description: "Main website - imac-production-testing tunnel",
     url: process.env.BYTEBLAST_HEALTH_URL || "https://byteblast.xyz",
+    kind: "website",
+  },
+  {
+    id: "mc-panel",
+    name: "mc-panel.byteblast.xyz",
+    description: "Minecraft server management panel",
+    url: "https://mc-panel.byteblast.xyz/",
     kind: "website",
   },
   {
@@ -45,37 +53,43 @@ export const monitors: MonitorDefinition[] = [
   },
 ];
 
-export async function checkMonitor(monitor: MonitorDefinition): Promise<MonitorResult> {
-  const startedAt = performance.now();
+export async function checkMonitors(definitions: MonitorDefinition[]): Promise<MonitorResult[]> {
   const checkedAt = new Date().toISOString();
+  const httpResults = await Promise.all(
+    definitions.map(async (monitor) => {
+      try {
+        const response = await fetch(monitor.url, {
+          cache: "no-store",
+          signal: AbortSignal.timeout(8000),
+          headers: {
+            accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
+          },
+        });
 
-  try {
-    const response = await fetch(monitor.url, {
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-      headers: {
-        accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
-      },
-    });
-    const latencyMs = Math.round(performance.now() - startedAt);
-    const online = response.ok;
+        return {
+          online: response.ok,
+          statusCode: response.status,
+          detail: response.ok ? "HTTP response received" : `HTTP ${response.status} response`,
+        };
+      } catch {
+        return {
+          online: false,
+          statusCode: null,
+          detail: "No response from endpoint",
+        };
+      }
+    }),
+  );
+
+  return definitions.map((monitor, index) => {
+    const httpResult = httpResults[index];
 
     return {
       ...monitor,
-      online,
-      latencyMs,
-      statusCode: response.status,
+      ...httpResult,
+      latencyMs: null,
+      latencyMethod: null,
       checkedAt,
-      detail: online ? "HTTP response received" : `HTTP ${response.status} response`,
     };
-  } catch {
-    return {
-      ...monitor,
-      online: false,
-      latencyMs: Math.round(performance.now() - startedAt),
-      statusCode: null,
-      checkedAt,
-      detail: "No response from endpoint",
-    };
-  }
+  });
 }
