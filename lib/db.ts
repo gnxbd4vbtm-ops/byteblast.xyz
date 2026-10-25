@@ -56,9 +56,9 @@ export type SystemProbe = {
 };
 
 const DEFAULT_CONTENT: SiteContent = {
-  hero_headline: "Building systems that feel clean, fast, and dependable.",
+  hero_headline: "I'm Byte. I build software and run it myself.",
   hero_description:
-    "I design and ship software that connects product thinking with real infrastructure discipline — from polished frontends to secure, self-hosted operations.",
+    "This is where I keep the projects I'm working on, from web apps to the infrastructure behind them.",
   current_focus: "Secure product delivery + operational transparency.",
   availability: "Open for select engagements",
   status_notes:

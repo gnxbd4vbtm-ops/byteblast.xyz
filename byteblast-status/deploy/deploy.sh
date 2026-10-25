@@ -15,8 +15,28 @@ rsync -az --delete \
 
 echo "==> Setting production environment"
 
-ssh "$REMOTE" \
-    "sed -i 's/^NODE_ENV=.*/NODE_ENV=production/' '$REMOTE_PROJECT/.env.local'"
+ssh "$REMOTE" "REMOTE_PROJECT='$REMOTE_PROJECT' bash -s" <<'EOF'
+set -euo pipefail
+
+ENV_FILE="$REMOTE_PROJECT/.env.local"
+touch "$ENV_FILE"
+
+set_env() {
+    key="$1"
+    value="$2"
+
+    if grep -q "^${key}=" "$ENV_FILE"; then
+        sed -i "s/^${key}=.*/${key}=${value}/" "$ENV_FILE"
+    else
+        printf '%s=%s\n' "$key" "$value" >>"$ENV_FILE"
+    fi
+}
+
+set_env NODE_ENV production
+set_env PORT 3000
+set_env STATUS_PORT 3010
+set_env DOWNLOADER_PORT 3020
+EOF
 
 echo "==> Installing dependencies and building main site"
 
@@ -36,23 +56,33 @@ ssh "$REMOTE" "
     npm run build
 "
 
+echo "==> Installing downloader dependencies"
+
+ssh "$REMOTE" "
+    set -e
+    cd '$REMOTE_PROJECT/byteblast-downloader'
+    uv sync --frozen
+"
+
 echo "==> Restarting services"
 
 ssh "$REMOTE" \
-    "sudo systemctl restart byteblast-web byteblast-status"
+    "sudo systemctl restart byteblast-web byteblast-status byteblast-downloader"
 
 echo "==> Checking services"
 
 ssh "$REMOTE" \
-    "systemctl is-active byteblast-web byteblast-status"
+    "systemctl is-active byteblast-web byteblast-status byteblast-downloader"
 
 echo "==> Checking origins"
 
 ssh "$REMOTE" \
     "curl --fail --silent --show-error --head http://127.0.0.1:3000 >/dev/null &&
-     curl --fail --silent --show-error --head http://127.0.0.1:3010 >/dev/null"
+     curl --fail --silent --show-error --head http://127.0.0.1:3010 >/dev/null &&
+     curl --fail --silent --show-error http://127.0.0.1:3020/api/health >/dev/null"
 
 echo
 echo "Deployment successful."
 echo "https://byteblast.xyz"
 echo "https://status.byteblast.xyz"
+echo "https://download.byteblast.xyz"

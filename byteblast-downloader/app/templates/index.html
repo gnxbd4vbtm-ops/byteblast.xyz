@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Download public media as video or audio with ByteBlast.">
+  <title>Downloader | ByteBlast</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header><a class="brand" href="/">ByteBlast / Downloader</a><nav><a href="https://byteblast.xyz">Main site</a><a href="https://status.byteblast.xyz">Status</a><a href="/list">Batch download</a></nav></header>
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Media utility / self-hosted</p>
+      <h1>Download video or audio.</h1>
+      <p>Paste a supported public media URL, choose a format, and download the result directly in your browser.</p>
+      <form id="fetch-form" class="url-box">
+        <input id="url" type="url" required placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+        <button id="fetch" type="submit"><span>Fetch</span></button>
+      </form>
+      <div id="message" role="status" aria-live="polite"></div>
+    </section>
+
+    <section id="result" class="result hidden">
+      <div class="media-card">
+        <div class="thumb-wrap"><img id="thumbnail" alt="Media thumbnail"><span id="duration"></span></div>
+        <div class="metadata"><h2 id="title"></h2><p id="uploader"></p></div>
+      </div>
+      <div class="options">
+        <div class="field wide"><label for="quality">Video quality</label><select id="quality"></select></div>
+        <div class="field"><label for="output">Output</label><select id="output"><option value="original">Original / best</option><option value="mp4">MP4</option><option value="webm">WebM</option><option value="h264_mp4">H.264 compatible MP4</option><option value="audio">Audio only</option></select></div>
+        <div id="audio-field" class="field hidden"><label for="audio">Audio format</label><select id="audio"><option value="original">Original / best</option><option value="mp3">MP3</option><option value="m4a">M4A</option><option value="opus">Opus</option><option value="wav">WAV</option></select></div>
+        <div id="subtitle-field" class="field hidden"><label for="subtitle">Subtitles</label><select id="subtitle"><option value="">None</option></select></div>
+        <button id="download" class="download">Download</button>
+      </div>
+    </section>
+
+    <section id="progress-card" class="progress-card hidden">
+      <div class="progress-head"><div><span id="stage">Preparing</span><p id="detail">Creating download job…</p></div><strong id="percent">0%</strong></div>
+      <div class="bar"><i id="bar"></i></div><div class="stats"><span id="size"></span><span id="speed"></span><span id="eta"></span></div>
+    </section>
+  </main>
+  <footer>
+    <span>ByteBlast / Downloader</span>
+    <span><a href="mailto:contact@byteblast.xyz">Contact</a> · <a href="/license">MIT License</a></span>
+  </footer>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

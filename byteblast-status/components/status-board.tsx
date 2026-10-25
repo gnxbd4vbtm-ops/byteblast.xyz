@@ -50,12 +50,12 @@ export default function StatusBoard({ initialData }: { initialData: StatusPayloa
     <div className="board-shell">
       <header className="board-header">
         <div>
-          <div className="eyebrow"><span className="pulse-dot" /> Live service monitor</div>
+          <div className="eyebrow"><span className="pulse-dot" /> Service monitoring</div>
           <h1>System status</h1>
-          <p className="lede">A quiet view into the services keeping byteblast online.</p>
+          <p className="lede">Availability and response times for monitored services.</p>
         </div>
         <button className="refresh-button" type="button" onClick={() => void refresh()} disabled={isRefreshing}>
-          <span className={isRefreshing ? "refresh-icon spinning" : "refresh-icon"}>↻</span>
+          <span className="refresh-icon">↻</span>
           {isRefreshing ? "Checking" : "Check now"}
         </button>
       </header>

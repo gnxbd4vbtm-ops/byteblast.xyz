@@ -1,0 +1,29 @@
+[project]
+name = "byteblast-downloader"
+version = "1.0.0"
+description = "A secure, self-hosted web frontend for yt-dlp"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "jinja2>=3.1,<4",
+  "pydantic-settings>=2.6,<3",
+  "python-multipart>=0.0.18,<1",
+  "uvicorn[standard]>=0.32,<1",
+  "yt-dlp>=2025.1.1",
+]
+
+[dependency-groups]
+dev = ["httpx>=0.28,<1", "pytest>=8.3,<9", "pytest-asyncio>=0.24,<1", "ruff>=0.8,<1"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

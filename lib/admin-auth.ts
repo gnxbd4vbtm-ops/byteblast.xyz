@@ -3,12 +3,27 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const ADMIN_COOKIE_NAME = "byteblast_admin_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
-const SESSION_SECRET = process.env.ADMIN_SESSION_SECRET ?? "development-admin-secret-change-me";
+
+function getRequiredAuthSetting(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required authentication configuration: ${name}`);
+  }
+  return value;
+}
+
+export function getAdminSessionSecret() {
+  return getRequiredAuthSetting("ADMIN_SESSION_SECRET");
+}
+
+export function getPasskeyChallengeSecret() {
+  return getRequiredAuthSetting("PASSKEY_CHALLENGE_SECRET");
+}
 
 export function getAdminCredentials() {
   return {
-    username: process.env.ADMIN_USERNAME ?? "admin",
-    password: process.env.ADMIN_PASSWORD ?? "byteblast-admin",
+    username: getRequiredAuthSetting("ADMIN_USERNAME"),
+    password: getRequiredAuthSetting("ADMIN_PASSWORD"),
   };
 }
 
@@ -22,7 +37,7 @@ function decodeBase64Url(value: string) {
 
 function createSignedToken(payload: Record<string, unknown>) {
   const encodedPayload = encodeBase64Url(JSON.stringify(payload));
-  const signature = createHmac("sha256", SESSION_SECRET)
+  const signature = createHmac("sha256", getAdminSessionSecret())
     .update(encodedPayload)
     .digest("base64url");
 
@@ -36,7 +51,7 @@ export function verifySessionToken(token: string) {
     return false;
   }
 
-  const expectedSignature = createHmac("sha256", SESSION_SECRET)
+  const expectedSignature = createHmac("sha256", getAdminSessionSecret())
     .update(payloadBase64)
     .digest("base64url");
 

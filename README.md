@@ -1,27 +1,21 @@
 # byteblast.xyz
 
-A clean-room rebuild of the byteblast personal site and operations surface. The project is built with Next.js, TypeScript, Tailwind, SQLite storage, and a server-first architecture for a public portfolio, site-focused status dashboard, and private admin control plane.
+## What is it?
 
-## Product goals
+This is my personal site and infrastructure status surface. It is a Next.js app for my portfolio, public status page, admin tools, and the small pieces of operational tooling I use to keep the site running.
 
-- Professional developer portfolio with a concise, high-trust brand presence
-- Public status dashboard dedicated strictly to site health and uptime without hardcoded values
-- Private admin control plane with edit forms for site status and content updates
-- SQLite-backed storage engine with WAL mode replacing legacy JSONL flat files
-- Admin-only `/api/v1/status` telemetry endpoint returning exit codes, error codes, and latency for building independent status pages
-- Production-ready deployment setup for self-hosted Linux hosts running behind Cloudflare Tunnel
+## Why does it exist?
 
-## Stack
+I wanted one place to present my work, keep the site status visible, and manage the little operational details without fighting a bunch of disconnected tools. It keeps the site itself, the uptime/status information, and the admin controls in one self-hosted setup.
 
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS
-- Node.js Linux runtime (v22+)
-- SQLite storage engine (`node:sqlite` in WAL mode)
-- Systemd process supervision & Cloudflare Tunnel
+## How do I install/use it?
 
-## Local development
+Requirements:
+
+- Node.js 22 or later
+- npm
+
+Setup:
 
 ```bash
 npm install
@@ -29,71 +23,44 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000
+Then open http://localhost:3000 in a browser.
 
-## Environment variables
+The app reads site, email, authentication, and optional GitHub settings from environment variables. See .env.example for the full list. Admin login supports a password and WebAuthn passkeys. Authentication has no built-in fallback credentials; configure these values explicitly:
 
-The app expects the following variables to be present in local or production environments:
+- `ADMIN_USERNAME` and `ADMIN_PASSWORD` for admin login
+- `ADMIN_SESSION_SECRET` for signing and verifying admin sessions only
+- `PASSKEY_CHALLENGE_SECRET` for signing short-lived WebAuthn challenges
+- `STATUS_API_KEY` for authenticating requests to `/api/v1/status`
 
-- `NEXT_PUBLIC_SITE_URL` - Canonical website URL
-- `PUBLIC_EMAIL` - Public inquiry email address
-- `ADMIN_EMAIL` - Operator email address
-- `STATUS_DOMAIN` - Custom status domain or subdomain
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` - SMTP delivery settings for contact notifications and replies
-- `ADMIN_USERNAME` - Admin authentication username
-- `ADMIN_PASSWORD` - Admin authentication password
-- `ADMIN_SESSION_SECRET` - HMAC signing key & Bearer token for status API
-- `GITHUB_USERNAME` - GitHub profile for portfolio repository display
-- `GITHUB_TOKEN` - Optional personal access token for higher rate limits
+Use a distinct, long random value for each secret. Generate values with `openssl rand -base64 32`. `PASSKEY_CHALLENGE_SECRET` is required to use passkey registration or authentication. The status API key is never accepted from a URL or browser session; send it in the Authorization header:
 
-## Core Architecture & Features
+```bash
+curl -H "Authorization: Bearer ${STATUS_API_KEY}" "${NEXT_PUBLIC_SITE_URL}/api/v1/status"
+```
 
-### 1. SQLite Storage Layer (`lib/db.ts`)
-- Replaces legacy JSONL flat files with atomic, WAL-mode SQLite storage (`data/byteblast.db`).
-- Tables:
-  - `site_events`: Page views, clicks, visitor IDs, referrers, and user agents.
-  - `contact_messages`: Inbound contact inquiries.
-  - `site_status`: Live site status state (`operational`, `degraded`, `maintenance`, `outage`), headline, and details.
-  - `site_content`: Dynamic copy for hero headlines, descriptions, availability badges, and posture notes.
-  - `system_probes`: Operational health probes, exit codes, HTTP status codes, latency, and error codes.
-- Automatic one-time migration from existing JSONL files on initialization.
+In production, `NEXT_PUBLIC_SITE_URL` must be the canonical HTTPS origin. Authentication redirects and WebAuthn origin validation use this configured origin rather than forwarded host headers. Local development uses `http://localhost:${PORT:-3000}`. The app adds a per-request nonce-based Content Security Policy; `unsafe-eval` is allowed only in development for Next.js debugging.
 
-### 2. Dedicated Site Status Page (`/status`)
-- Focused **exclusively** on the `byteblast.xyz` site itself (no fake deployment queues or hardcoded dummy dates).
-- Displays live SQLite probe latency, calculated uptime %, 24h traffic volume, and dynamic status copy managed by the operator.
-- Fully dynamic rendering (`force-dynamic`).
+For deployment, this repo also includes the Linux service, Cloudflare Tunnel, and release automation under the deploy/ folder.
 
-### 3. Admin Edit Form (`/admin`)
-- Restricted by secure HMAC-signed cookie authentication.
-- Real-time edit forms for:
-  - **Site Status**: Change operational state, headline, and public incident note.
-  - **Site Content**: Update hero headline, bio description, focus callout, and status notes without redeploying.
-- View live audience metrics, inbound contact messages, and recent system probes.
+## What can it do?
 
-### 4. Admin-Only Status API (`/api/v1/status`)
-- Built specifically to power independent status pages or third-party monitoring agents (Uptime Kuma, BetterStack, etc.).
-- Authentication via:
-  - `Authorization: Bearer <ADMIN_SESSION_SECRET>`
-  - `x-admin-key: <ADMIN_SESSION_SECRET>`
-  - `?token=<ADMIN_SESSION_SECRET>`
-  - Active admin session cookie in browser
-- Returns exit codes (`exitCode: 0`), error codes (`errorCode`), node process memory, system uptime, database latency, probe history, and error logs.
+- Serve a simple developer portfolio
+- Show a public status page for the live site
+- Track operational health and uptime data in SQLite
+- Let me update site status and homepage copy from an admin panel without redeploying
+- Secure the admin area with password login and WebAuthn passkeys for passwordless access
+- Store registered passkeys in SQLite and verify browser-based authentication challenges
+- Accept contact form messages and send them through SMTP
+- Expose a private status API for monitoring or custom status pages
+- Run on a self-hosted Linux setup using systemd and Cloudflare Tunnel
 
-## Production Deployment
+## Is it maintained?
 
-Production deployment files and scripts are located in `deploy/`:
-- `deploy/byteblast-web.service` - Systemd service unit for the Next.js app with security hardening and loopback binding.
-- `deploy/cloudflared.service` - Systemd service unit for the Cloudflare Tunnel daemon.
-- `deploy/cloudflare-tunnel.yml` - Tunnel configuration mapping `byteblast.xyz`, `www`, and `status` to `http://127.0.0.1:3000`.
-- `deploy/deploy.sh` - Automated deployment script (git pull, npm install, build, service restart, health check).
-- `deploy/setup.sh` - Host provisioning script (cloudflared install, firewall lockdown, service enablement).
-- `deploy/README.md` - Complete production runbook.
+Yes, it is maintained for my live byteblast.xyz deployment and the day-to-day needs of running the site. I use it as a working system, not just a static portfolio.
 
-## Endpoints
+## Who/what uses it?
 
-- Public site: `/`
-- Site status: `/status`
-- Health check: `/api/health`
-- Private admin control: `/admin`
-- Admin login: `/admin/login`
-- Telemetry API (Admin only): `/api/v1/status`
+- Visitors checking the portfolio and site status
+- Me, as the admin/operator
+- Monitoring tools or status pages using the private status API
+- The local Linux infrastructure that hosts the app and tunnel

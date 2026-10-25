@@ -20,5 +20,5 @@ export async function POST(request: Request) {
   await saveContactMessage(payload);
   await sendContactNotification(payload);
 
-  return NextResponse.redirect(new URL("/contact?success=1", getPublicOrigin(request)));
+  return NextResponse.redirect(new URL("/contact?success=1", getPublicOrigin()));
 }

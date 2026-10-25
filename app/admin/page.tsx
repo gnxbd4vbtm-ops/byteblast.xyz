@@ -254,7 +254,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 defaultValue={siteContent.hero_headline}
                 required
                 className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none"
-                placeholder="e.g. Building systems that feel clean, fast, and dependable."
+                placeholder="e.g. I'm Byte. I build software and run it myself."
               />
             </div>
 
@@ -314,7 +314,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
       {/* INDEPENDENT STATUS API & DIAGNOSTICS */}
       <section className="mt-8 rounded-3xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
           <div>
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" />
@@ -322,13 +322,6 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
             </div>
             <h2 className="mt-2 text-2xl font-bold text-white">Admin-only Telemetry Endpoint</h2>
           </div>
-          <Link
-            href="/api/v1/status"
-            target="_blank"
-            className="inline-flex items-center rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-mono font-medium text-cyan-200 transition hover:border-cyan-400 hover:bg-cyan-500/20"
-          >
-            Open /api/v1/status (Browser Session) →
-          </Link>
         </div>
 
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
@@ -336,9 +329,9 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
         </p>
 
         <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950 p-4 font-mono text-xs text-slate-300">
-          <p className="text-slate-500 mb-1"># Query with Bearer token or x-admin-key:</p>
+          <p className="text-slate-500 mb-1"># Authenticate with the dedicated status API key:</p>
           <p className="text-cyan-300 overflow-x-auto">
-            curl -H &quot;Authorization: Bearer $ADMIN_SESSION_SECRET&quot; https://byteblast.xyz/api/v1/status
+            curl -H &quot;Authorization: Bearer $STATUS_API_KEY&quot; $NEXT_PUBLIC_SITE_URL/api/v1/status
           </p>
         </div>
 

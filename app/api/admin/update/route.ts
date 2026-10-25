@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     if (contentType.includes("application/json")) {
       return NextResponse.json({ ok: true, type: "status" });
     }
-    return NextResponse.redirect(new URL("/admin?saved=status", getPublicOrigin(request)));
+    return NextResponse.redirect(new URL("/admin?saved=status", getPublicOrigin()));
   }
 
   if (type === "content") {
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     if (contentType.includes("application/json")) {
       return NextResponse.json({ ok: true, type: "content" });
     }
-    return NextResponse.redirect(new URL("/admin?saved=content", getPublicOrigin(request)));
+    return NextResponse.redirect(new URL("/admin?saved=content", getPublicOrigin()));
   }
 
   if (type === "reply") {
@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     if (contentType.includes("application/json")) {
       return NextResponse.json({ ok: true, type: "reply" });
     }
-    return NextResponse.redirect(new URL("/admin?sent=reply", getPublicOrigin(request)));
+    return NextResponse.redirect(new URL("/admin?sent=reply", getPublicOrigin()));
   }
 
   return NextResponse.json({ error: "Unknown update type" }, { status: 400 });

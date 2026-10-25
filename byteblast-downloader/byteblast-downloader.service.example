@@ -1,0 +1,33 @@
+[Unit]
+Description=ByteBlast Downloader
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=byte
+Group=byte
+SupplementaryGroups=render
+WorkingDirectory=/home/byte/Projects/byteblast.xyz/byteblast-downloader
+Environment=HOST=127.0.0.1
+Environment=PORT=3020
+EnvironmentFile=-/home/byte/Projects/byteblast.xyz/byteblast-downloader/.env.local
+ExecStart=/home/byte/Projects/byteblast.xyz/byteblast-downloader/.venv/bin/uvicorn app.main:app --host ${HOST} --port ${PORT} --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/tmp/byteblast-downloads
+PrivateDevices=false
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictNamespaces=true
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { createHash, timingSafeEqual } from "node:crypto";
 import {
   getDb,
   getSiteStatus,
@@ -13,39 +13,22 @@ import {
 export const dynamic = "force-dynamic";
 
 function checkApiAuth(request: Request): boolean {
-  const secret = process.env.ADMIN_SESSION_SECRET ?? "development-admin-secret-change-me";
+  const match = /^Bearer ([^\s]+)$/i.exec(request.headers.get("authorization") ?? "");
+  if (!match) return false;
 
-  // Check Authorization Bearer header
-  const authHeader = request.headers.get("authorization");
-  if (authHeader) {
-    const [type, token] = authHeader.split(" ");
-    if (type?.toLowerCase() === "bearer" && token === secret) {
-      return true;
-    }
+  const expected = process.env.STATUS_API_KEY;
+  if (!expected) {
+    throw new Error("Missing required configuration: STATUS_API_KEY");
   }
 
-  // Check custom header
-  const apiKeyHeader = request.headers.get("x-admin-key") || request.headers.get("x-admin-token");
-  if (apiKeyHeader === secret) {
-    return true;
-  }
-
-  // Check query parameter (?token=...)
-  const url = new URL(request.url);
-  const tokenParam = url.searchParams.get("token") || url.searchParams.get("key");
-  if (tokenParam === secret) {
-    return true;
-  }
-
-  return false;
+  const suppliedDigest = createHash("sha256").update(match[1]).digest();
+  const expectedDigest = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(suppliedDigest, expectedDigest);
 }
 
 export async function GET(request: Request) {
   const startTime = performance.now();
-  const isCookieAuth = await isAdminAuthenticated();
-  const isHeaderAuth = checkApiAuth(request);
-
-  if (!isCookieAuth && !isHeaderAuth) {
+  if (!checkApiAuth(request)) {
     logSystemProbe({
       probeType: "api_status_auth",
       statusCode: 401,
@@ -61,7 +44,7 @@ export async function GET(request: Request) {
         errorCode: "AUTH_UNAUTHORIZED",
         exitCode: 1,
         statusCode: 401,
-        message: "Admin session or valid Bearer / x-admin-key secret required.",
+        message: "A valid Bearer authorization is required.",
       },
       { status: 401 }
     );

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Batch-download public media with ByteBlast.">
+  <title>Batch downloader | ByteBlast</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header><a class="brand" href="/">ByteBlast / Downloader</a><nav><a href="https://byteblast.xyz">Main site</a><a href="https://status.byteblast.xyz">Status</a><a href="/">Single download</a></nav></header>
+  <main>
+    <section class="list-page">
+      <p class="eyebrow">Batch utility / up to 30 items</p>
+      <h1>Download a list.</h1>
+      <p>Enter one supported public media URL per line. The same output settings are applied to every item.</p>
+      <form id="list-form" class="list-form">
+        <label for="urls">YouTube URLs</label>
+        <textarea id="urls" required placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/watch?v=..."></textarea>
+        <div class="list-settings">
+          <div class="field">
+            <label for="quality">Maximum quality</label>
+            <select id="quality">
+              <option value="best">Best available</option>
+              <option value="2160">2160p</option>
+              <option value="1440">1440p</option>
+              <option value="1080">1080p</option>
+              <option value="720">720p</option>
+              <option value="480">480p</option>
+              <option value="360">360p</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="output">Output</label>
+            <select id="output">
+              <option value="original">Original / best</option>
+              <option value="mp4">MP4</option>
+              <option value="webm">WebM</option>
+              <option value="h264_mp4">H.264 compatible MP4</option>
+              <option value="audio">Audio only</option>
+            </select>
+          </div>
+          <div id="audio-field" class="field hidden">
+            <label for="audio">Audio format</label>
+            <select id="audio">
+              <option value="original">Original / best</option>
+              <option value="mp3">MP3</option>
+              <option value="m4a">M4A</option>
+              <option value="opus">Opus</option>
+              <option value="wav">WAV</option>
+            </select>
+          </div>
+        </div>
+        <button id="start" type="submit">Download all</button>
+      </form>
+      <div id="message" role="status" aria-live="polite"></div>
+      <section id="queue" class="queue hidden" aria-live="polite"></section>
+    </section>
+  </main>
+  <footer>
+    <span>ByteBlast / Downloader</span>
+    <span><a href="mailto:contact@byteblast.xyz">Contact</a> · <a href="/license">MIT License</a></span>
+  </footer>
+  <div id="deliveries" hidden></div>
+  <script src="/static/list.js" defer></script>
+</body>
+</html>

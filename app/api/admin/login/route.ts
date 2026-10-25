@@ -17,5 +17,5 @@ export async function POST(request: Request) {
 
   await setAdminSession(username);
 
-  return NextResponse.redirect(new URL("/admin", getPublicOrigin(request)));
+  return NextResponse.redirect(new URL("/admin", getPublicOrigin()));
 }

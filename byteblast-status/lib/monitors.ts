@@ -23,6 +23,13 @@ export const monitors: MonitorDefinition[] = [
     kind: "website",
   },
   {
+    id: "byteblast-downloader",
+    name: "download.byteblast.xyz",
+    description: "Media download service - downloader production tunnel",
+    url: process.env.BYTEBLAST_DOWNLOADER_HEALTH_URL || "https://download.byteblast.xyz/api/health",
+    kind: "service",
+  },
+  {
     id: "byteblast-git",
     name: "git.byteblast.xyz",
     description: "Forgejo web interface - forgejo-production tunnel",
