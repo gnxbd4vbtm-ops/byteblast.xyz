@@ -100,16 +100,6 @@ export default async function Home() {
             {content.availability}
           </div>
 
-          <div className="intro-copy">
-            <p className="eyebrow">Developer, self-hoster, and tinkerer</p>
-            <h1>
-              {content.hero_headline}
-            </h1>
-            <p className="intro-description">
-              {content.hero_description}
-            </p>
-          </div>
-
           <div className="intro-actions">
             <Link href="#work" className="button-primary">
               View work
@@ -155,7 +145,7 @@ export default async function Home() {
         ))}
       </section>
 
-      <section className="content-section">
+      <section id="services" className="content-section">
         <div className="section-heading">
           <div>
             <p className="section-label">Access points</p>

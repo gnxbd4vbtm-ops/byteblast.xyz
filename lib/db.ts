@@ -56,7 +56,7 @@ export type SystemProbe = {
 };
 
 const DEFAULT_CONTENT: SiteContent = {
-  hero_headline: "I'm Byte. I build software and run it myself.",
+  hero_headline: "Hi, Im byte and i like programming",
   hero_description:
     "This is where I keep the projects I'm working on, from web apps to the infrastructure behind them.",
   current_focus: "Secure product delivery + operational transparency.",
@@ -168,6 +168,15 @@ function initSchema(db: DatabaseSync) {
   for (const [key, value] of Object.entries(DEFAULT_CONTENT)) {
     insertContent.run(key, value, now);
   }
+
+  db.prepare(
+    "UPDATE site_content SET value = ?, updated_at = ? WHERE key = ? AND value = ?"
+  ).run(
+    DEFAULT_CONTENT.hero_headline,
+    now,
+    "hero_headline",
+    "I'm Byte. I build software and run it myself."
+  );
 }
 
 function migrateJsonlData(db: DatabaseSync) {

@@ -41,12 +41,26 @@ export default function SiteHeader() {
         </nav>
 
         <div className="header-actions">
-          <Link
-            href="/contact"
-            className="header-contact"
+          <form
+            action="/search"
+            method="get"
+            role="search"
+            className="site-search-form header-search"
           >
-            Book a project
-          </Link>
+            <input
+              type="search"
+              name="q"
+              aria-label="Search this site"
+              placeholder="Search"
+              className="site-search-input"
+            />
+            <button type="submit" aria-label="Submit search" className="site-search-submit">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+                <circle cx="8.75" cy="8.75" r="5.75" />
+                <path d="m13 13 4 4" />
+              </svg>
+            </button>
+          </form>
 
           <button
             type="button"
@@ -107,6 +121,27 @@ export default function SiteHeader() {
           </button>
         </div>
 
+        <form
+          action="/search"
+          method="get"
+          role="search"
+          className="site-search-form mobile-search"
+        >
+          <input
+            type="search"
+            name="q"
+            aria-label="Search this site"
+            placeholder="Search public pages"
+            className="site-search-input"
+          />
+          <button type="submit" aria-label="Submit search" className="site-search-submit">
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+              <circle cx="8.75" cy="8.75" r="5.75" />
+              <path d="m13 13 4 4" />
+            </svg>
+          </button>
+        </form>
+
         <nav className="mobile-nav">
           {navItems.map((item) => (
             <Link
@@ -120,13 +155,6 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <Link
-          href="/contact"
-          onClick={() => setMobileOpen(false)}
-          className="mobile-contact"
-        >
-          Book a project
-        </Link>
       </aside>
     </>
   );

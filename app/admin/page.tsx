@@ -254,7 +254,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                 defaultValue={siteContent.hero_headline}
                 required
                 className="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none"
-                placeholder="e.g. I'm Byte. I build software and run it myself."
+                placeholder="e.g. Hi, Im byte and i like programming"
               />
             </div>
 
