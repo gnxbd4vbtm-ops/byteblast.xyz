@@ -33,7 +33,7 @@ export async function getGitHubProjects() {
         "User-Agent": "byteblast-portfolio",
         ...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
       },
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
 
     if (!response.ok) {

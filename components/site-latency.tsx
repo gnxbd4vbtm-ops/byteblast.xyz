@@ -17,10 +17,9 @@ async function requestCloudflareEdge(): Promise<number> {
 
 async function measureEdgeLatency(): Promise<number> {
   await requestCloudflareEdge();
-  const samples: number[] = [];
-  for (let i = 0; i < sampleCount; i += 1) {
-    samples.push(await requestCloudflareEdge());
-  }
+  const samples = await Promise.all(
+    Array.from({ length: sampleCount }, () => requestCloudflareEdge()),
+  );
   samples.sort((a, b) => a - b);
   return samples[Math.floor(samples.length / 2)];
 }

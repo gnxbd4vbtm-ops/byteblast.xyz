@@ -1,11 +1,9 @@
 import Link from "next/link";
 import SiteHeader from "@/components/site-header";
 import SiteLatency from "@/components/site-latency";
-import { getGitHubProjects } from "@/lib/github";
+import RecentProjects from "@/components/recent-projects";
 import { getSiteContent } from "@/lib/db";
 import { getLiveSiteStatus } from "@/lib/status";
-
-export const dynamic = "force-dynamic";
 
 const capabilityGroups = [
   {
@@ -51,10 +49,7 @@ const accessServices = [
 ];
 
 export default async function Home() {
-  const [repos, siteStatus] = await Promise.all([
-    getGitHubProjects(),
-    getLiveSiteStatus(),
-  ]);
+  const siteStatus = await getLiveSiteStatus();
   const content = getSiteContent();
 
   const siteHealth = [
@@ -62,33 +57,6 @@ export default async function Home() {
     { label: "System uptime", value: `${siteStatus.uptimePercent}%`, state: siteStatus.uptimePercent >= 99 ? "ok" : "warn" },
   ];
 
-  const featuredProjects = repos.length
-    ? repos.map((repo) => ({
-        name: repo.name,
-        detail: repo.description ?? "Platform and product work shipped with a security-first mindset.",
-        stack: [repo.language ?? "Code", ...(repo.topics ?? []).slice(0, 2)],
-        href: repo.html_url,
-      }))
-    : [
-        {
-          name: "Orbit Control",
-          detail: "Private internal ops dashboard for service provisioning, environment health, and release visibility.",
-          stack: ["Next.js", "SQLite", "Linux", "Auth"],
-          href: "https://github.com/gnxbd4vbtm-ops",
-        },
-        {
-          name: "Bluepeak Relay",
-          detail: "High-availability event pipeline powering monitoring, alerting, and service state tracking across self-hosted systems.",
-          stack: ["Go", "gRPC", "Kafka", "SRE"],
-          href: "https://github.com/gnxbd4vbtm-ops",
-        },
-        {
-          name: "Signal Forge",
-          detail: "Automation toolkit that normalizes deployment checks, health indicators, and escalation logic for developer operations.",
-          stack: ["TypeScript", "CI/CD", "Docker", "Monitoring"],
-          href: "https://github.com/gnxbd4vbtm-ops",
-        },
-      ];
   return (
     <main className="site-shell">
       <SiteHeader />
@@ -211,37 +179,7 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="project-list">
-            {featuredProjects.map((project) => (
-              <a
-                key={project.name}
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                className="project-item"
-              >
-                <div className="project-topline">
-                  <div>
-                    <h3>{project.name}</h3>
-                    <p className="body-copy">
-                      {project.detail}
-                    </p>
-                  </div>
-                  <span className="project-state">
-                    active
-                  </span>
-                </div>
-
-                <div className="tag-list">
-                  {project.stack.map((stack) => (
-                    <span key={stack} className="project-tag">
-                      {stack}
-                    </span>
-                  ))}
-                </div>
-              </a>
-            ))}
-          </div>
+          <RecentProjects />
         </div>
 
         <aside id="systems" className="content-section systems-section">
