@@ -34,6 +34,8 @@ The app reads site, email, authentication, and optional GitHub settings from env
 
 For Apple iCloud+ custom-domain email, set `SMTP_HOST=smtp.mail.me.com`, `SMTP_PORT=587`, and `SMTP_SECURE=false` to use STARTTLS. Set `SMTP_USER` and `SMTP_FROM` to the full custom-domain email address, and use an Apple app-specific password for `SMTP_PASSWORD` (not your Apple Account password). Generate the app-specific password in your Apple Account settings, then add these values to `.env.local`.
 
+To send a test email to a specific recipient using the configured SMTP account, run `node ./test-email.mjs recipient@example.com` from the project root.
+
 Use a distinct, long random value for each secret. Generate values with `openssl rand -base64 32`. `PASSKEY_CHALLENGE_SECRET` is required to use passkey registration or authentication. The status API key is never accepted from a URL or browser session; send it in the Authorization header:
 
 ```bash
