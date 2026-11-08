@@ -100,6 +100,11 @@ export default async function Home() {
             {content.availability}
           </div>
 
+          <div className="intro-copy">
+            <h1>{content.hero_headline}</h1>
+            <p className="intro-description">{content.hero_description}</p>
+          </div>
+
           <div className="intro-actions">
             <Link href="#work" className="button-primary">
               View work

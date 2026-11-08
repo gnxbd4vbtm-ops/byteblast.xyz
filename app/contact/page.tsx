@@ -6,9 +6,28 @@ const contactMethods = [
   { label: "GitHub", value: "github.byteblast.xyz", href: "https://github.byteblast.xyz" },
 ];
 
-export default function ContactPage() {
+type ContactPageProps = {
+  searchParams: Promise<{ success?: string; error?: string }>;
+};
+
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const { success, error } = await searchParams;
+
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-5 sm:py-10">
+      {success === "1" && (
+        <p role="status" className="contact-notice is-success">
+          Email sent — thanks for reaching out!
+        </p>
+      )}
+      {error === "send_failed" && (
+        <p role="alert" className="contact-notice is-error">
+          Your message was saved, but we couldn’t send the email notification. Please email
+          {" "}
+          <a href="mailto:contact@byteblast.xyz">contact@byteblast.xyz</a>.
+        </p>
+      )}
+
       <div className="mb-4 md:hidden">
         <Link
           href="/"

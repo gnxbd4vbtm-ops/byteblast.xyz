@@ -18,7 +18,14 @@ export async function POST(request: Request) {
   }
 
   await saveContactMessage(payload);
-  await sendContactNotification(payload);
 
-  return NextResponse.redirect(new URL("/contact?success=1", getPublicOrigin()));
+  let redirectPath = "/contact?success=1";
+  try {
+    await sendContactNotification(payload);
+  } catch (error) {
+    console.error("Failed to send contact notification:", error);
+    redirectPath = "/contact?error=send_failed";
+  }
+
+  return NextResponse.redirect(new URL(redirectPath, getPublicOrigin()), { status: 303 });
 }

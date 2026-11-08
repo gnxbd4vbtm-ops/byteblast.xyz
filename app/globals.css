@@ -108,14 +108,13 @@ body {
 .search-result p { margin: 7px 0 0; color: var(--copy); font-size: 13px; line-height: 1.6; }
 .search-home-link { display: inline-flex; margin-top: 28px; color: var(--accent); font-size: 13px; text-underline-offset: 3px; }
 .q7v-page { display: flex; min-height: 70vh; flex-direction: column; align-items: flex-start; justify-content: center; padding-top: 54px; padding-bottom: 64px; }
-.q7v-page > .section-label { text-transform: none; }
-.q7v-page h1 { max-width: 700px; margin-top: 12px; font-size: clamp(36px, 7vw, 64px); font-weight: 400; line-height: 1.08; }
-.q7v-content { display: flex; align-items: center; gap: 18px; margin-top: 22px; }
-.q7v-art { display: block; width: 120px; height: auto; border: 1px solid var(--border-strong); border-radius: 6px; }
-.q7v-note { color: var(--copy); font-size: 14px; }
+.q7v-page > .section-label { color: var(--muted); font-size: 16px; font-weight: 700; letter-spacing: 0; text-transform: none; }
+.q7v-page h1 { max-width: 100%; margin-top: 12px; font-size: clamp(28px, 7vw, 64px); font-weight: 400; line-height: 1.08; overflow-wrap: anywhere; }
+.q7v-content { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 22px; }
+.q7v-art { display: block; width: clamp(88px, 30vw, 120px); max-width: 100%; height: auto; border: 1px solid var(--border-strong); border-radius: 6px; }
+.q7v-note { min-width: 0; color: var(--copy); font-size: 14px; }
 @media (max-width: 460px) {
-  .q7v-content { align-items: flex-start; gap: 12px; }
-  .q7v-art { width: min(40vw, 120px); }
+  .q7v-content { align-items: center; gap: 12px; }
 }
 
 .intro-layout {
@@ -262,6 +261,10 @@ body {
 .probe-timing span { color: var(--accent); font-family: "Courier New", monospace; font-size: 11px; }
 .probe-timing p { margin-top: 3px; color: var(--muted); font-size: 9px; }
 .probe-empty { border-bottom: 1px solid var(--line); padding: 13px 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.contact-notice { position: fixed; top: 16px; left: 50%; z-index: 50; width: min(440px, calc(100% - 32px)); transform: translateX(-50%); border: 1px solid var(--border-strong); border-radius: 6px; padding: 13px 16px; background: #18191c; box-shadow: 0 12px 36px rgb(0 0 0 / 35%); font-size: 13px; line-height: 1.5; }
+.contact-notice.is-success { border-color: var(--accent); color: var(--foreground); }
+.contact-notice.is-error { border-color: var(--danger); color: var(--foreground); }
+.contact-notice a { color: var(--accent); text-underline-offset: 3px; }
 
 @media (max-width: 940px) and (min-width: 761px) {
   .site-header { gap: 10px; }
